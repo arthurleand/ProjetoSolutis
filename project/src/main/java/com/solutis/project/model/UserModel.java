@@ -41,6 +41,6 @@ public class UserModel {
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private UserType type;
+	private UserType typeUser;
 
 }

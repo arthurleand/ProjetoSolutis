@@ -11,24 +11,23 @@ import com.solutis.project.model.UserType;
 
 import lombok.Getter;
 
-
 @Getter
 public class UserRegisterForm {
-	
+
 	@NotBlank
 	private String name;
-	
+
 	@NotBlank
 	private String cpf;
-	
+
 	@NotBlank
 	@Email
 	private String email;
-	
+
 	@NotBlank
-	@Size(min = 6, max = 8 )
+	@Size(min = 6, max = 8)
 	private String password;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private UserType typeUser;
