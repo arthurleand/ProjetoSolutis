@@ -23,9 +23,9 @@ public class ScheduleModel {
 	private Long id;
 	
 	@NotBlank
-	private String nameSchedule;
+	private String scheduleName;
 	
 	@NotBlank
-	private String descripition;
+	private String description;
 	
 }
