@@ -9,9 +9,11 @@ import javax.validation.constraints.Size;
 
 import com.solutis.project.model.UserType;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class UserRegisterForm {
 
 	@NotBlank
