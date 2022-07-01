@@ -1,5 +1,7 @@
 package com.solutis.project.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,4 +30,8 @@ public class ScheduleModel {
 	@NotBlank
 	private String description;
 	
+	private Boolean session = false;
+	
+	private LocalDateTime sessionTime;
+		
 }
