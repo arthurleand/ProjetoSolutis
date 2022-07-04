@@ -1,6 +1,6 @@
 package com.solutis.project.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +8,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -30,7 +31,13 @@ public class VoteModel {
 	@Enumerated(EnumType.STRING)
 	private VoteUser vote;
 	
-	//private UserModel user;
+	@NotNull
+	@ManyToOne
+	private ScheduleModel fkschedule;
 	
-	private LocalDate dateAndTime = LocalDate.now();
+	@NotNull
+	@ManyToOne
+	private UserModel fkuser;
+	
+	private LocalDateTime dateAndTime = LocalDateTime.now();
 }

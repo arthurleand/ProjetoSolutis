@@ -1,13 +1,17 @@
 package com.solutis.project.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,8 +34,14 @@ public class ScheduleModel {
 	@NotBlank
 	private String description;
 	
+	@OneToMany(mappedBy = "fkschedule")
+	@JsonIgnoreProperties(value = "fkschedule")
+	private List<VoteModel> vote;
+	
 	private Boolean session = false;
 	
+
 	private LocalDateTime sessionTime;
-		
+	
+	
 }
