@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.solutis.project.model.ScheduleModel;
+import com.solutis.project.model.SessionStatus;
 import com.solutis.project.model.UserModel;
 import com.solutis.project.model.VoteModel;
 import com.solutis.project.model.form.VoteForm;
@@ -27,33 +28,25 @@ public class VoteService {
 	private ScheduleRepository scheduleRepository;
 
 	public Optional<VoteModel> registerVote(@Valid VoteForm voteForm) {
-		if (voteForm.getFkschedule().getSessionTime()
-				.isBefore(voteForm.getFkschedule().getSessionTime().plusMinutes(3))) {
-			if (!voteRepository.findByFkuserIdAndFkscheduleId(voteForm.getFkuser().getId(), 
-					voteForm.getFkschedule().getId()).isPresent()) {
-				System.out.println(voteForm.getFkuser().getName());
-				VoteModel vote = new VoteModel();
-				vote.setVote(voteForm.getVote());
-				vote.setFkuser(voteForm.getFkuser());
-				vote.setFkschedule(voteForm.getFkschedule());
-				return Optional.of(voteRepository.save(vote));
+		if (scheduleRepository.findById(voteForm.getFkschedule().getId()).isPresent()) {
+			Optional<ScheduleModel> findSchedule = scheduleRepository
+					.findById(voteForm.getFkschedule().getId());
+			if (findSchedule.get().getSession() == SessionStatus.NEVEROPEN) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This session never open!");
 			}
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already voted!");
-		}
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This session is closed");
-/*		Optional<ScheduleModel> schedule = scheduleRepository.findById(voteForm.getFkschedule().getId());
-		if(schedule.isPresent()){
-			VoteModel vote = new VoteModel();
-			vote.setVote(voteForm.getVote());
-			vote.setFkuser(voteForm.getFkuser());
-			vote.setFkschedule(voteForm.getFkschedule());
-			if(schedule.get().getVote().stream().filter(s -> s.getFkuser().getId()== vote.getFkuser().getId()) == null){
-				return Optional.of(voteRepository.save(vote));
+			if (findSchedule.get().getSession() == SessionStatus.OPEN) {
+				if (!voteRepository.findByFkuserIdAndFkscheduleId(voteForm.getFkuser().getId(),
+						voteForm.getFkschedule().getId()).isPresent()) {
+					VoteModel vote = new VoteModel();
+					vote.setVote(voteForm.getVote());
+					vote.setFkuser(voteForm.getFkuser());
+					vote.setFkschedule(voteForm.getFkschedule());
+					return Optional.of(voteRepository.save(vote));
+				}
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already voted!");
 			}
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already voted!");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This session is closed!");
 		}
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Schedule dont exist!");
-	*/
-//		return null;
-	}	
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule does not exist!");
+	}
 }
