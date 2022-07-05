@@ -27,9 +27,11 @@ public class VoteService {
 	private ScheduleRepository scheduleRepository;
 
 	public Optional<VoteModel> registerVote(@Valid VoteForm voteForm) {
-	/*	if (voteForm.getFkschedule().getSessionTime()
+		if (voteForm.getFkschedule().getSessionTime()
 				.isBefore(voteForm.getFkschedule().getSessionTime().plusMinutes(3))) {
-			if (!scheduleRepository.findByVoteFkuserId(voteForm.getFkuser().getId()).isPresent()) {
+			if (!voteRepository.findByFkuserIdAndFkscheduleId(voteForm.getFkuser().getId(), 
+					voteForm.getFkschedule().getId()).isPresent()) {
+				System.out.println(voteForm.getFkuser().getName());
 				VoteModel vote = new VoteModel();
 				vote.setVote(voteForm.getVote());
 				vote.setFkuser(voteForm.getFkuser());
@@ -38,7 +40,7 @@ public class VoteService {
 			}
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already voted!");
 		}
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This session is closed");*/
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This session is closed");
 /*		Optional<ScheduleModel> schedule = scheduleRepository.findById(voteForm.getFkschedule().getId());
 		if(schedule.isPresent()){
 			VoteModel vote = new VoteModel();
@@ -52,6 +54,6 @@ public class VoteService {
 		}
 		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Schedule dont exist!");
 	*/
-		return null;
+//		return null;
 	}	
 }

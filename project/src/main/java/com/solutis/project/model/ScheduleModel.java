@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,10 +40,10 @@ public class ScheduleModel {
 	@JsonIgnoreProperties(value = "fkschedule")
 	private List<VoteModel> vote;
 	
-	private Boolean session = false;
-	
+	@Enumerated(EnumType.STRING)
+	private SessionStatus session = SessionStatus.NEVEROPEN;
 
 	private LocalDateTime sessionTime;
 	
-	
+	private Long sessionMinute;
 }

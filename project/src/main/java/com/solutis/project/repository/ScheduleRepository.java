@@ -10,5 +10,5 @@ import com.solutis.project.model.VoteModel;
 
 public interface ScheduleRepository extends JpaRepository<ScheduleModel, Long>{
 
-	Optional<VoteModel> findByVoteFkuserId(Long id);
+	
 }
