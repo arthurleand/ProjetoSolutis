@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,4 +41,12 @@ public class ScheduleController {
 		
 	}
 	
+	@PutMapping("/count")
+	public ResponseEntity<ScheduleModel> count(@RequestBody ScheduleModel schedule) {
+		return scheduleService.countVoteSchedule(schedule)
+				.map(resp -> ResponseEntity.status(HttpStatus.OK)
+				.body(resp))
+				.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.build());
+	}
 }

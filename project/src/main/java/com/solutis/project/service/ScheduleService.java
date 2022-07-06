@@ -3,6 +3,7 @@ package com.solutis.project.service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,13 +17,19 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.solutis.project.model.ScheduleModel;
 import com.solutis.project.model.SessionStatus;
+import com.solutis.project.model.VoteModel;
+import com.solutis.project.model.VoteUser;
 import com.solutis.project.repository.ScheduleRepository;
+import com.solutis.project.repository.VoteRepository;
 
 @Service
 public class ScheduleService {
 
 	@Autowired
 	private ScheduleRepository scheduleRepository;
+	
+	@Autowired 
+	private VoteRepository voteRepository;
 
 	public Optional<ScheduleModel> openSession(@Valid ScheduleModel schedule) {
 		if (scheduleRepository.findById(schedule.getId()).isPresent()) {
@@ -39,16 +46,13 @@ public class ScheduleService {
 					
 					LocalDateTime sessionClose = LocalDateTime.now()
 							.plusMinutes(schedule.getSessionMinute());
-					System.out.println(sessionClose);
 					
 					Date dateTimer = Date.from(sessionClose.atZone(ZoneId.systemDefault())
 							.toInstant());
-					System.out.println(dateTimer);
 					
 					timerClosed.schedule(new TimerTask() {
 						@Override
 						public void run() {
-							System.out.println("Sessão Fechada as: "+LocalDateTime.now());
 							schedule.setSession(SessionStatus.CLOSED);
 							scheduleRepository.save(schedule);
 						}
@@ -62,5 +66,47 @@ public class ScheduleService {
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule does not exist!");
 	}
+	
+	public Optional<ScheduleModel> countVoteSchedule(ScheduleModel schedule) {
 
+		if (scheduleRepository.findById(schedule.getId()).isPresent()) {
+			Optional<ScheduleModel> findSchedule = scheduleRepository.findById(schedule.getId());
+			if (findSchedule.get().getSession() == SessionStatus.CLOSED) {
+				Optional<List<VoteModel>> yesVoteList = voteRepository
+						.findAllByFkscheduleIdAndVote(schedule.getId(),VoteUser.YES);
+				Long yesVote = yesVoteList.get().stream().map(y -> y).count();
+
+				Optional<List<VoteModel>> noVoteList = voteRepository
+						.findAllByFkscheduleIdAndVote(schedule.getId(),VoteUser.NO);
+				Long noVote = noVoteList.get().stream().map(y -> y).count();
+
+				double yesPercent = (yesVote * 100) / (yesVote + noVote);
+				double noPercent = (noVote * 100) / (yesVote + noVote);
+
+				if (yesVote > noVote) {
+					schedule.setWinnerVote("YES");
+				} else {
+					schedule.setWinnerVote("NO");
+				}
+				if(yesVote == noVote) {
+				schedule.setWinnerVote("DRAW");
+				}
+				
+				schedule.setSessionMinute(findSchedule.get().getSessionMinute());
+				schedule.setSessionTime(findSchedule.get().getSessionTime());
+				schedule.setSession(SessionStatus.CLOSED);
+				schedule.setYesPercent(yesPercent);
+				schedule.setNoPercent(noPercent);
+				schedule.setYesVote(yesVote);
+				schedule.setNoVote(noVote);
+				
+				return Optional.of(scheduleRepository.save(schedule));
+				
+			} else {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Session not closed!");
+			}
+		} else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule does not exist!");
+		}
+	}
 }

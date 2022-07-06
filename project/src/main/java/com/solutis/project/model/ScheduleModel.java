@@ -46,4 +46,14 @@ public class ScheduleModel {
 	private LocalDateTime sessionTime;
 	
 	private Long sessionMinute;
+	
+	private String winnerVote;
+	
+	private Long yesVote;
+	
+	private Long NoVote;
+	
+	private double yesPercent;
+	
+	private double noPercent;
 }
