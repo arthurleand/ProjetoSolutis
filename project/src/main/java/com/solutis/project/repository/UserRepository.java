@@ -9,4 +9,6 @@ import com.solutis.project.model.UserModel;
 public interface UserRepository extends JpaRepository<UserModel, Long>{
 	
 	public Optional<UserModel> findByCpf(String cpf);
+
+	public Optional<UserModel> findByEmail(String email);
 }

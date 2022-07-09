@@ -1,12 +1,15 @@
 package com.solutis.project.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,6 +19,10 @@ import com.solutis.project.model.form.CpfValidationForm;
 import com.solutis.project.model.form.UserRegisterForm;
 import com.solutis.project.repository.UserRepository;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @Service
 public class UserService {
 
@@ -23,6 +30,10 @@ public class UserService {
 	private UserRepository userRepository;
 	@Autowired
 	private CpfService cpfService;
+	@Value("${forum.jwt.expiration}")
+	private String expiration;
+	@Value("${forum.jwt.secret}")
+	private String secret;
 	
 	public ResponseEntity<UserModel> register(@Valid UserRegisterForm userForm) {
 		Optional<UserModel> user = userRepository.findByCpf(userForm.getCpf());
@@ -52,6 +63,34 @@ public class UserService {
 				return Optional.of(userRepository.save(user));
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!");
+	}
+
+	public String generateToken(Authentication authentication) {
+		UserModel user = (UserModel) authentication.getPrincipal();
+		Date nowDate = new Date();
+		Date dateExpiration = new Date(nowDate.getTime()+ Long.parseLong(expiration));
+		return Jwts.builder()
+				.setIssuer("API Solutis")
+				.setSubject(user.getId().toString())
+				.setIssuedAt(nowDate)
+				.setExpiration(dateExpiration)
+				.signWith(SignatureAlgorithm.HS256, secret)
+				.compact();
+	}
+
+	public boolean isValidToken(String token) {
+		try {
+			Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}	
+	}
+
+	public Long getIdUser(String token) {
+		Claims clain = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
+		return Long.parseLong(clain.getSubject());
+		
 	}
 
 }

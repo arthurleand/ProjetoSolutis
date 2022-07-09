@@ -3,6 +3,7 @@ package com.solutis.project.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,7 +37,7 @@ public class ScheduleModel {
 	@NotBlank
 	private String description;
 	
-	@OneToMany(mappedBy = "fkschedule")
+	@OneToMany(mappedBy = "fkschedule", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = "fkschedule")
 	private List<VoteModel> vote;
 	

@@ -8,6 +8,10 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.solutis.project.model.UserModel;
+import com.solutis.project.model.dto.UserTokenDto;
+import com.solutis.project.model.form.UserLoginForm;
 import com.solutis.project.model.form.UserRegisterForm;
 import com.solutis.project.repository.UserRepository;
 import com.solutis.project.service.UserService;
@@ -32,6 +38,9 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private AuthenticationManager authManager;
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<UserModel> getById(@PathVariable Long id){
@@ -65,5 +74,18 @@ public class UserController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"User Not Found!");
 		}
 		userRepository.deleteById(id);
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<UserTokenDto> login(@RequestBody @Valid UserLoginForm form){
+		UsernamePasswordAuthenticationToken login = form.convert();	
+		try {
+			Authentication authentication = authManager.authenticate(login);
+			String token = userService.generateToken(authentication);
+			return ResponseEntity.ok(new UserTokenDto(token, "Bearer"));	
+		} catch (AuthenticationCredentialsNotFoundException e) {
+			return ResponseEntity.badRequest().build();
+		}
+					
 	}
 }
