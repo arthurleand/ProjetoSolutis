@@ -28,6 +28,7 @@ import com.solutis.project.model.dto.UserTokenDto;
 import com.solutis.project.model.form.UserLoginForm;
 import com.solutis.project.model.form.UserRegisterForm;
 import com.solutis.project.repository.UserRepository;
+import com.solutis.project.service.TokenService;
 import com.solutis.project.service.UserService;
 
 @RestController
@@ -38,9 +39,10 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private UserRepository userRepository;
-	
 	@Autowired
 	private AuthenticationManager authManager;
+	@Autowired
+	private TokenService tokenService;
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<UserModel> getById(@PathVariable Long id){
@@ -77,11 +79,12 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
+	@Transactional
 	public ResponseEntity<UserTokenDto> login(@RequestBody @Valid UserLoginForm form){
 		UsernamePasswordAuthenticationToken login = form.convert();	
 		try {
 			Authentication authentication = authManager.authenticate(login);
-			String token = userService.generateToken(authentication);
+			String token = tokenService.generateToken(authentication);
 			return ResponseEntity.ok(new UserTokenDto(token, "Bearer"));	
 		} catch (AuthenticationCredentialsNotFoundException e) {
 			return ResponseEntity.badRequest().build();

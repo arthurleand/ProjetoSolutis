@@ -1,5 +1,6 @@
 package com.solutis.project.controller;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,13 @@ public class ScheduleController {
 	private ScheduleService scheduleService;
 	
 	@PostMapping
+	@Transactional
 	public ResponseEntity<ScheduleModel> createSchedule(@RequestBody @Valid ScheduleModel schedule){
 		return ResponseEntity.status(HttpStatus.CREATED).body(scheduleRepository.save(schedule));
 	}
 	
 	@PutMapping("/session")
+	@Transactional
 	public ResponseEntity<ScheduleModel> createSessions(@Valid @RequestBody ScheduleModel schedule){
 		return scheduleService.openSession(schedule)
 				.map(resp -> ResponseEntity.status(HttpStatus.OK)
@@ -41,6 +44,7 @@ public class ScheduleController {
 	}
 	
 	@PutMapping("/count")
+	@Transactional
 	public ResponseEntity<ScheduleModel> count(@RequestBody ScheduleModel schedule) {
 		return scheduleService.countVoteSchedule(schedule)
 				.map(resp -> ResponseEntity.status(HttpStatus.OK)

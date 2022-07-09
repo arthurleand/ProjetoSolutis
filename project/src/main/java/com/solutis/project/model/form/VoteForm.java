@@ -14,6 +14,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class VoteForm {
+	
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private VoteUser vote;

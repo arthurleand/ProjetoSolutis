@@ -29,9 +29,8 @@ public class UserRegisterForm {
 	@NotBlank
 	@Size(min = 6, max = 8)
 	private String password;
-
+	
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private UserType typeUser;
-
 }

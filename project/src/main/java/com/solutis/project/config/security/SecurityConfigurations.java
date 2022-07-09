@@ -15,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.solutis.project.repository.UserRepository;
-import com.solutis.project.service.UserService;
+import com.solutis.project.service.TokenService;
 
 @SuppressWarnings("deprecation")
 @EnableWebSecurity
@@ -25,9 +25,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter{
 	@Autowired
 	private AuthenticationService authenticationService;
 	@Autowired
-	private UserService userService;
-	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private TokenService tokenService;
 	
 	@Override
 	@Bean
@@ -44,12 +44,12 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		.antMatchers("/user").permitAll()
 		.antMatchers(HttpMethod.POST,"/user/login").permitAll()
-		.anyRequest().authenticated()
+		.antMatchers(HttpMethod.POST, "/vote").authenticated()
+		.anyRequest().hasRole("ADMIN")
 		.and().csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and().addFilterBefore(new AuthenticationTokenFilter(userService, userRepository),
+		.and().addFilterBefore(new AuthenticationTokenFilter(tokenService, userRepository),
 				UsernamePasswordAuthenticationFilter.class);
 	}
 	

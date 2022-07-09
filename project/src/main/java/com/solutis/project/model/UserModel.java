@@ -1,18 +1,16 @@
 package com.solutis.project.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -20,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -48,8 +47,9 @@ public class UserModel implements UserDetails{
 	@NotBlank
 	private String cpf;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Profile> profiles = new ArrayList<>();
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private UserType typeuser;
 	
 	@NotBlank
 	@Email
@@ -58,18 +58,15 @@ public class UserModel implements UserDetails{
 	@NotBlank
 	private String password;
 	
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private UserType typeUser;
-	
 	@OneToMany(mappedBy = "fkuser", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = "fksuser")
 	private List<VoteModel> vote;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return profiles;
+		return Collections.singletonList(new SimpleGrantedAuthority(typeuser.name()));
 	}
+	
 
 	@Override
 	public String getUsername() {

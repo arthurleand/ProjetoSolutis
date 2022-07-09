@@ -1,7 +1,6 @@
 package com.solutis.project.config.security;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,22 +8,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.solutis.project.model.UserModel;
 import com.solutis.project.repository.UserRepository;
-import com.solutis.project.service.UserService;
+import com.solutis.project.service.TokenService;
 
 public class AuthenticationTokenFilter extends OncePerRequestFilter{
 
-	private UserService userService;
+	private TokenService tokenService;
 	private UserRepository userRepository;
 	
 	
-	public AuthenticationTokenFilter(UserService userService, UserRepository userRepository) {
-		this.userService = userService;
+	public AuthenticationTokenFilter(TokenService tokenService, UserRepository userRepository) {
+		this.tokenService = tokenService;
 		this.userRepository = userRepository;
 	}
 
@@ -33,7 +31,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter{
 			throws ServletException, IOException {		
 		
 		String token = recoverToken(request);
-		boolean valid = userService.isValidToken(token);
+		boolean valid = tokenService.isValidToken(token);
 		if (valid) {
 			authenticationClient(token);
 		}
@@ -42,7 +40,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter{
 	}
 
 	private void authenticationClient(String token) {
-		Long idUser = userService.getIdUser(token);
+		Long idUser = tokenService.getIdUser(token);
 		UserModel user = userRepository.findById(idUser).get();
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,5 +1,6 @@
 package com.solutis.project.controller;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class VoteController {
 	private VoteService voteService;
 	
 	@PostMapping
+	@Transactional
 	public ResponseEntity<VoteModel> vote(@RequestBody @Valid VoteForm voteForm){
 	   return voteService.registerVote(voteForm)
 			   	.map(resp -> ResponseEntity.status(HttpStatus.OK)

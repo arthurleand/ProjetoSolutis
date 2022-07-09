@@ -2,7 +2,7 @@ package com.solutis.project.model;
 
 public enum UserType {
 	
-	ADMINISTRATOR,
-	COOPERATED;
+	ROLE_ADMIN,
+	ROLE_COOP;
 	
 }
