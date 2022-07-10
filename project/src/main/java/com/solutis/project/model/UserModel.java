@@ -67,7 +67,6 @@ public class UserModel implements UserDetails{
 		return Collections.singletonList(new SimpleGrantedAuthority(typeuser.name()));
 	}
 	
-
 	@Override
 	public String getUsername() {
 		return this.email;

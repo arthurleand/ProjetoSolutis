@@ -110,4 +110,40 @@ public class ScheduleService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule does not exist!");
 		}
 	}
+
+	public void autCount() {
+		Optional<List<ScheduleModel>> listSchedule = scheduleRepository.findAllBySession(SessionStatus.CLOSED);
+		
+		listSchedule.get().stream().forEach(s -> {
+			Optional<List<VoteModel>> yesVoteList = voteRepository
+					.findAllByFkscheduleIdAndVote(s.getId(),VoteUser.YES);
+			Long yesVote = yesVoteList.get().stream().map(y -> y).count();
+
+			Optional<List<VoteModel>> noVoteList = voteRepository
+					.findAllByFkscheduleIdAndVote(s.getId(),VoteUser.NO);
+			Long noVote = noVoteList.get().stream().map(y -> y).count();
+
+			double yesPercent = (yesVote * 100) / (yesVote + noVote);
+			double noPercent = (noVote * 100) / (yesVote + noVote);
+
+			if (yesVote > noVote) {
+				s.setWinnerVote("YES");
+			} else {
+				s.setWinnerVote("NO");
+			}
+			if(yesVote == noVote) {
+			s.setWinnerVote("DRAW");
+			}
+			
+			s.setSessionMinute(s.getSessionMinute());
+			s.setSessionTime(s.getSessionTime());
+			s.setSession(SessionStatus.CLOSED);
+			s.setYesPercent(yesPercent);
+			s.setNoPercent(noPercent);
+			s.setYesVote(yesVote);
+			s.setNoVote(noVote);
+			
+			scheduleRepository.save(s);
+		});
+	}
 }

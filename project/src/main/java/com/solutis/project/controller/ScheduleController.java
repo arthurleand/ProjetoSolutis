@@ -6,6 +6,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +19,12 @@ import com.solutis.project.model.ScheduleModel;
 import com.solutis.project.repository.ScheduleRepository;
 import com.solutis.project.service.ScheduleService;
 
+import lombok.extern.java.Log;
+
 @RestController
 @RequestMapping("/schedule")
+@EnableScheduling
+@Log
 public class ScheduleController {
 	
 	@Autowired
@@ -51,5 +58,11 @@ public class ScheduleController {
 				.body(resp))
 				.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.build());
+	}
+	
+	@Scheduled(fixedDelay = 60000)
+	void automaticCount(){
+		log.info("Accounting for closed sessions!");
+		scheduleService.autCount();
 	}
 }

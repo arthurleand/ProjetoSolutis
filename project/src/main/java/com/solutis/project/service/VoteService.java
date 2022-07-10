@@ -16,6 +16,7 @@ import com.solutis.project.model.UserModel;
 import com.solutis.project.model.VoteModel;
 import com.solutis.project.model.form.VoteForm;
 import com.solutis.project.repository.ScheduleRepository;
+import com.solutis.project.repository.UserRepository;
 import com.solutis.project.repository.VoteRepository;
 
 @Service
@@ -23,9 +24,10 @@ public class VoteService {
 
 	@Autowired
 	private VoteRepository voteRepository;
-
 	@Autowired
 	private ScheduleRepository scheduleRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 	public Optional<VoteModel> registerVote(@Valid VoteForm voteForm) {
 		if (scheduleRepository.findById(voteForm.getFkschedule().getId()).isPresent()) {
@@ -38,7 +40,9 @@ public class VoteService {
 			if (findSchedule.get().getSession() == SessionStatus.OPEN) {
 				if (!voteRepository.findByFkuserIdAndFkscheduleId(voteForm.getFkuser().getId(),
 						voteForm.getFkschedule().getId()).isPresent()) {
+					Optional<UserModel> user = userRepository.findById(voteForm.getFkuser().getId());
 					VoteModel vote = new VoteModel();
+					voteForm.getFkuser().setTypeuser(user.get().getTypeuser());
 					vote.setVote(voteForm.getVote());
 					vote.setFkuser(voteForm.getFkuser());
 					vote.setFkschedule(voteForm.getFkschedule());
