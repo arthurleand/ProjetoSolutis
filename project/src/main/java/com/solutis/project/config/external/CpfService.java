@@ -10,6 +10,6 @@ import com.solutis.project.model.form.CpfValidationForm;
 public interface CpfService {
 	
 	@GetMapping("{cpf}")
-	CpfValidationForm CpfValidation(@PathVariable("cpf") String cpf);
+	CpfValidationForm cpfValidation(@PathVariable("cpf") String cpf);
 	
 }

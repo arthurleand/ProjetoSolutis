@@ -37,7 +37,7 @@ public class UserService {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 						"Email is already in use!");
 			}
-			CpfValidationForm cpfValidation = cpfService.CpfValidation(userForm.getCpf());
+			CpfValidationForm cpfValidation = cpfService.cpfValidation(userForm.getCpf());
 			if(cpfValidation.getIsValid()) {
 			UserModel newUser = new UserModel();
 			newUser.setCpf(userForm.getCpf());

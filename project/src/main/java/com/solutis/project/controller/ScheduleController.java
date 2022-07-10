@@ -1,5 +1,7 @@
 package com.solutis.project.controller;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -7,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +35,17 @@ public class ScheduleController {
 	@Autowired
 	private ScheduleService scheduleService;
 	
+	@GetMapping
+	public ResponseEntity<List<ScheduleModel>> getAll() {
+		return ResponseEntity.ok(scheduleRepository.findAll());
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<ScheduleModel> getById(@PathVariable Long id){
+		return scheduleRepository.findById(id)
+				.map(resp -> ResponseEntity.ok(resp))
+		        .orElse(ResponseEntity.notFound().build());
+	}
 	@PostMapping
 	@Transactional
 	public ResponseEntity<ScheduleModel> createSchedule(@RequestBody @Valid ScheduleModel schedule){
@@ -60,7 +73,7 @@ public class ScheduleController {
 				.build());
 	}
 	
-	@Scheduled(fixedDelay = 60000)
+//	@Scheduled(fixedDelay = 60000)
 	void automaticCount(){
 		log.info("Accounting for closed sessions!");
 		scheduleService.autCount();

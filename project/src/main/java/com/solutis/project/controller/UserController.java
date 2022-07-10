@@ -43,6 +43,7 @@ public class UserController {
 	private AuthenticationManager authManager;
 	@Autowired
 	private TokenService tokenService;
+
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<UserModel> getById(@PathVariable Long id){
