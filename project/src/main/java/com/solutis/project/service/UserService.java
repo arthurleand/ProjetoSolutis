@@ -34,7 +34,8 @@ public class UserService {
 		 else {
 			Optional<UserModel> emailValidation = userRepository.findByEmail(userForm.getEmail());
 			if(emailValidation.isPresent()) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already in use!");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+						"Email is already in use!");
 			}
 			CpfValidationForm cpfValidation = cpfService.CpfValidation(userForm.getCpf());
 			if(cpfValidation.getIsValid()) {

@@ -32,7 +32,8 @@ public class VoteService {
 			Optional<ScheduleModel> findSchedule = scheduleRepository
 					.findById(voteForm.getFkschedule().getId());
 			if (findSchedule.get().getSession() == SessionStatus.NEVEROPEN) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This session never open!");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+						"This session never open!");
 			}
 			if (findSchedule.get().getSession() == SessionStatus.OPEN) {
 				if (!voteRepository.findByFkuserIdAndFkscheduleId(voteForm.getFkuser().getId(),

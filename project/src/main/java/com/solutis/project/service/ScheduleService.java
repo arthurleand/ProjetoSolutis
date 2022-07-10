@@ -61,7 +61,8 @@ public class ScheduleService {
 					return Optional.of(scheduleRepository.save(schedule));
 
 				}
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This session is already open!");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+						"This session is already open!");
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule does not exist!");
