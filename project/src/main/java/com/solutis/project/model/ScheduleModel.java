@@ -54,7 +54,7 @@ public class ScheduleModel {
 	
 	private Long yesVote;
 	
-	private Long NoVote;
+	private Long noVote;
 	
 	private double yesPercent;
 	

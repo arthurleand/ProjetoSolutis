@@ -54,8 +54,6 @@ public class UserService {
 
 	public Optional<UserModel> update(@Valid UserModel user) {
 		if (userRepository.findById(user.getId()).isPresent()) {
-			Optional<UserModel> findUser = userRepository.findById(user.getId());
-			if (findUser.isPresent())
 				user.setPassword(encryptPassword(user.getPassword()));
 				return Optional.of(userRepository.save(user));
 		}

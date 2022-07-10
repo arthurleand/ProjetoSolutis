@@ -1,5 +1,6 @@
 package com.solutis.project.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -44,11 +45,15 @@ public class UserController {
 	@Autowired
 	private TokenService tokenService;
 
+	@GetMapping
+	public ResponseEntity<List<UserModel>> getAll() {
+		return ResponseEntity.ok(userRepository.findAll());
+	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<UserModel> getById(@PathVariable Long id){
 		return userRepository.findById(id)
-				.map(resp -> ResponseEntity.ok(resp))
+				.map(ResponseEntity::ok)
 		        .orElse(ResponseEntity.notFound().build());
 	}
 	

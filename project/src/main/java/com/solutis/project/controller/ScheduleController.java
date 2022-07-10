@@ -43,7 +43,7 @@ public class ScheduleController {
 	@GetMapping("/{id}")
 	public ResponseEntity<ScheduleModel> getById(@PathVariable Long id){
 		return scheduleRepository.findById(id)
-				.map(resp -> ResponseEntity.ok(resp))
+				.map(ResponseEntity::ok)
 		        .orElse(ResponseEntity.notFound().build());
 	}
 	@PostMapping
