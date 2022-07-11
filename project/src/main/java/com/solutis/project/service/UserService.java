@@ -11,9 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.solutis.project.config.external.CpfService;
 import com.solutis.project.model.UserModel;
-import com.solutis.project.model.form.CpfValidationForm;
 import com.solutis.project.model.form.UserRegisterForm;
 import com.solutis.project.repository.UserRepository;
 
@@ -37,8 +35,7 @@ public class UserService {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 						"Email is already in use!");
 			}
-			CpfValidationForm cpfValidation = cpfService.cpfValidation(userForm.getCpf());
-			if(cpfValidation.getIsValid()) {
+			if(cpfService.validateCpf(userForm.getCpf())) {
 			UserModel newUser = new UserModel();
 			newUser.setCpf(userForm.getCpf());
 			newUser.setEmail(userForm.getEmail());
