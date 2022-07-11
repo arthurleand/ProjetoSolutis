@@ -9,6 +9,5 @@ import com.solutis.project.model.ScheduleModel;
 import com.solutis.project.model.SessionStatus;
 
 public interface ScheduleRepository extends JpaRepository<ScheduleModel, Long>{
-	
-	Optional<List<ScheduleModel>> findAllBySession(SessionStatus session);
+	Optional<List<ScheduleModel>> findAllBySessionAndWinnerVote(SessionStatus session, String winner);
 }

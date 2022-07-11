@@ -118,7 +118,7 @@ public class ScheduleService {
 	}
 
 	public void autCount() {
-		Optional<List<ScheduleModel>> listSchedule = scheduleRepository.findAllBySession(SessionStatus.CLOSED);
+		Optional<List<ScheduleModel>> listSchedule = scheduleRepository.findAllBySessionAndWinnerVote(SessionStatus.CLOSED,null);
 		
 		listSchedule.get().stream().forEach(s -> {
 			Optional<List<VoteModel>> yesVoteList = voteRepository
@@ -148,7 +148,7 @@ public class ScheduleService {
 			s.setNoPercent(noPercent);
 			s.setYesVote(yesVote);
 			s.setNoVote(noVote);
-			
+			System.out.println(s.getScheduleName());
 			sendMensage(RabbitMQConstants.INVENTORY_QUEUE, s);
 			
 			scheduleRepository.save(s);
