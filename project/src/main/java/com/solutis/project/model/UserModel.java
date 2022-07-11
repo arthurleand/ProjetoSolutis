@@ -50,7 +50,7 @@ public class UserModel implements UserDetails{
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private UserType typeuser;
+	private UserType typeUser;
 	
 	@NotBlank
 	@Email
@@ -66,7 +66,7 @@ public class UserModel implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.singletonList(new SimpleGrantedAuthority(typeuser.name()));
+		return Collections.singletonList(new SimpleGrantedAuthority(typeUser.name()));
 	}
 	
 	@Override

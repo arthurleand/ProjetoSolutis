@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solutis.project.model.ScheduleModel;
+import com.solutis.project.model.form.ScheduleForm;
 import com.solutis.project.repository.ScheduleRepository;
 import com.solutis.project.service.ScheduleService;
 
@@ -54,9 +55,9 @@ public class ScheduleController {
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "cacheSchedule", allEntries = true)
-	public ResponseEntity<ScheduleModel> createSchedule(@RequestBody @Valid ScheduleModel schedule){
+	public ResponseEntity<ScheduleModel> createSchedule(@RequestBody @Valid ScheduleForm scheduleForm){
 		log.info("Create schedule");
-		return ResponseEntity.status(HttpStatus.CREATED).body(scheduleRepository.save(schedule));
+		return scheduleService.saveSchedule(scheduleForm);
 	}
 	
 	@PutMapping("/session")

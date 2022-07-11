@@ -32,19 +32,24 @@ public class VoteService {
 		if (scheduleRepository.findById(voteForm.getFkschedule().getId()).isPresent()) {
 			Optional<ScheduleModel> findSchedule = scheduleRepository
 					.findById(voteForm.getFkschedule().getId());
+			
 			if (findSchedule.get().getSession() == SessionStatus.NEVEROPEN) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-						"This session never open!");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This session never open!");
 			}
+			
 			if (findSchedule.get().getSession() == SessionStatus.OPEN) {
-				if (!voteRepository.findByFkuserIdAndFkscheduleId(voteForm.getFkuser().getId(),
-						voteForm.getFkschedule().getId()).isPresent()) {
+				
+				if (!voteRepository.findByFkuserIdAndFkscheduleId
+						(voteForm.getFkuser().getId(), voteForm.getFkschedule()
+								.getId()).isPresent()) {
 					Optional<UserModel> user = userRepository.findById(voteForm.getFkuser().getId());
+					
 					VoteModel vote = new VoteModel();
-					voteForm.getFkuser().setTypeuser(user.get().getTypeuser());
+					voteForm.getFkuser().setTypeUser(user.get().getTypeUser());
 					vote.setVote(voteForm.getVote());
 					vote.setFkuser(voteForm.getFkuser());
 					vote.setFkschedule(voteForm.getFkschedule());
+					
 					return Optional.of(voteRepository.save(vote));
 				}
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already voted!");

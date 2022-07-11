@@ -70,7 +70,7 @@ public class UserController {
 	@Transactional
 	@CacheEvict(value = "cacheUser", allEntries = true)
 	public ResponseEntity<UserModel> register(@Valid @RequestBody UserRegisterForm user){
-		log.info("Register user");
+		log.info("Registring user");
 		return userService.register(user);
 	}
 	
