@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,7 +26,10 @@ import com.solutis.project.model.dto.ScheduleDTO;
 import com.solutis.project.repository.ScheduleRepository;
 import com.solutis.project.repository.VoteRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ScheduleService {
 
 	@Autowired
@@ -116,8 +120,10 @@ public class ScheduleService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule does not exist!");
 		}
 	}
-
+	
+	@Scheduled(fixedDelay = 60000)
 	public void autCount() {
+		log.info("Accounting for closed sessions!");
 		Optional<List<ScheduleModel>> listSchedule = scheduleRepository.findAllBySessionAndWinnerVote(SessionStatus.CLOSED,null);
 		
 		listSchedule.get().stream().forEach(s -> {
@@ -148,7 +154,6 @@ public class ScheduleService {
 			s.setNoPercent(noPercent);
 			s.setYesVote(yesVote);
 			s.setNoVote(noVote);
-			System.out.println(s.getScheduleName());
 			sendMensage(RabbitMQConstants.INVENTORY_QUEUE, s);
 			
 			scheduleRepository.save(s);
@@ -168,6 +173,7 @@ public class ScheduleService {
 		dto.setWinnerVote(scheduleModel.getWinnerVote());
 		dto.setYesPercent(scheduleModel.getYesPercent());
 		dto.setYesVote(scheduleModel.getYesVote());
+		log.info("Send message for RabbitMQ about schedule id: {}", scheduleModel.getId());
 		this.rabbitTemplate.convertAndSend(queueName,dto);
 	}
 }

@@ -15,8 +15,11 @@ import com.solutis.project.model.VoteModel;
 import com.solutis.project.model.form.VoteForm;
 import com.solutis.project.service.VoteService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/vote")
+@Slf4j
 public class VoteController {
 	
 	@Autowired
@@ -25,7 +28,10 @@ public class VoteController {
 	@PostMapping
 	@Transactional
 	public ResponseEntity<VoteModel> vote(@RequestBody @Valid VoteForm voteForm){
-	   return voteService.registerVote(voteForm)
+	   log.info("Registring vote by userId= {} in scheduleId: {}",
+			   voteForm.getFkuser().getId(),
+			   voteForm.getFkschedule().getId());
+		return voteService.registerVote(voteForm)
 			   	.map(resp -> ResponseEntity.status(HttpStatus.OK)
 				.body(resp))
 				.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST)
