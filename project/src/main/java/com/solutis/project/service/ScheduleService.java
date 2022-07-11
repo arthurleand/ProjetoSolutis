@@ -10,15 +10,18 @@ import java.util.TimerTask;
 
 import javax.validation.Valid;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.solutis.project.config.external.RabbitMQConstants;
 import com.solutis.project.model.ScheduleModel;
 import com.solutis.project.model.SessionStatus;
 import com.solutis.project.model.VoteModel;
 import com.solutis.project.model.VoteUser;
+import com.solutis.project.model.dto.ScheduleDTO;
 import com.solutis.project.repository.ScheduleRepository;
 import com.solutis.project.repository.VoteRepository;
 
@@ -30,6 +33,9 @@ public class ScheduleService {
 	
 	@Autowired 
 	private VoteRepository voteRepository;
+	
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
 
 	public Optional<ScheduleModel> openSession(@Valid ScheduleModel schedule) {
 		if (scheduleRepository.findById(schedule.getId()).isPresent()) {
@@ -143,7 +149,25 @@ public class ScheduleService {
 			s.setYesVote(yesVote);
 			s.setNoVote(noVote);
 			
+			sendMensage(RabbitMQConstants.INVENTORY_QUEUE, s);
+			
 			scheduleRepository.save(s);
 		});
+	}
+	
+	public void sendMensage(String queueName, ScheduleModel scheduleModel){
+		ScheduleDTO dto = new ScheduleDTO();
+		dto.setDescription(scheduleModel.getDescription());
+		dto.setId(scheduleModel.getId());
+		dto.setNoPercent(scheduleModel.getNoPercent());
+		dto.setNoVote(scheduleModel.getNoVote());
+		dto.setScheduleName(scheduleModel.getScheduleName());
+		dto.setSession(scheduleModel.getSession());
+		dto.setSessionMinute(scheduleModel.getSessionMinute());
+		dto.setSessionTime(scheduleModel.getSessionTime());
+		dto.setWinnerVote(scheduleModel.getWinnerVote());
+		dto.setYesPercent(scheduleModel.getYesPercent());
+		dto.setYesVote(scheduleModel.getYesVote());
+		this.rabbitTemplate.convertAndSend(queueName,dto);
 	}
 }

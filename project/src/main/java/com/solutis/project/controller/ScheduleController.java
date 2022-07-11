@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,7 +74,7 @@ public class ScheduleController {
 				.build());
 	}
 	
-//	@Scheduled(fixedDelay = 60000)
+	@Scheduled(fixedDelay = 60000)
 	void automaticCount(){
 		log.info("Accounting for closed sessions!");
 		scheduleService.autCount();
