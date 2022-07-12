@@ -19,6 +19,10 @@ Na pasta clonada abra o terminal e rode o docker compose:
 ```
 docker compose up
 ```
+Antes de rodar configure o profile setando em Run As > Run Configurations > ProjectApplication > Arguments > VM arguments:
+```
+-Dspring.profiles.active=dev
+```
 Na IDE de preferência rode o projeto.
 
 ## ⚙️ Acessos das principais funções
