@@ -21,7 +21,7 @@ Na IDE de preferência rode o projeto.
 ## ⚙️ Acessos das principais funções
 Senha MySQL:
 ```
-User: rooot
+User: root
 Password:arthur
 ```
 Usuário em memória no banco:
