@@ -10,7 +10,6 @@ import java.util.TimerTask;
 
 import javax.validation.Valid;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -19,12 +18,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.solutis.project.config.external.RabbitMQConstants;
 import com.solutis.project.model.ScheduleModel;
 import com.solutis.project.model.SessionStatus;
 import com.solutis.project.model.VoteModel;
 import com.solutis.project.model.VoteUser;
-import com.solutis.project.model.dto.ScheduleDTO;
+
 import com.solutis.project.model.form.ScheduleForm;
 import com.solutis.project.repository.ScheduleRepository;
 import com.solutis.project.repository.VoteRepository;
@@ -33,17 +31,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-@Profile("dev")
-public class ScheduleService {
+@Profile("prod")
+public class ScheduleServiceprod {
 
 	@Autowired
 	private ScheduleRepository scheduleRepository;
 	
 	@Autowired 
 	private VoteRepository voteRepository;
-	
-	@Autowired
-	private RabbitTemplate rabbitTemplate;
 	
 	public ResponseEntity<ScheduleModel> saveSchedule(@Valid ScheduleForm scheduleForm) {
 		ScheduleModel schedule = new ScheduleModel();
@@ -124,8 +119,7 @@ public class ScheduleService {
 				schedule.setNoPercent(noPercent);
 				schedule.setYesVote(yesVote);
 				schedule.setNoVote(noVote);
-				
-				sendMensage(RabbitMQConstants.INVENTORY_QUEUE, schedule);
+
 				return Optional.of(scheduleRepository.save(schedule));
 
 			}
@@ -170,28 +164,7 @@ public class ScheduleService {
 			s.setYesVote(yesVote);
 			s.setNoVote(noVote);
 			
-			sendMensage(RabbitMQConstants.INVENTORY_QUEUE, s);
 			scheduleRepository.save(s);
 		});
 	}
-	
-	public void sendMensage(String queueName, ScheduleModel scheduleModel) {
-		ScheduleDTO dto = new ScheduleDTO();
-		dto.setDescription(scheduleModel.getDescription());
-		dto.setId(scheduleModel.getId());
-		dto.setNoPercent(scheduleModel.getNoPercent());
-		dto.setNoVote(scheduleModel.getNoVote());
-		dto.setScheduleName(scheduleModel.getScheduleName());
-		dto.setSession(scheduleModel.getSession());
-		dto.setSessionMinute(scheduleModel.getSessionMinute());
-		dto.setSessionTime(scheduleModel.getSessionTime());
-		dto.setWinnerVote(scheduleModel.getWinnerVote());
-		dto.setYesPercent(scheduleModel.getYesPercent());
-		dto.setYesVote(scheduleModel.getYesVote());
-		
-		log.info("Send message for RabbitMQ about schedule id: {}", scheduleModel.getId());
-		this.rabbitTemplate.convertAndSend(queueName, dto);
-	}
-
-	
 }

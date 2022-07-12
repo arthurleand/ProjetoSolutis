@@ -4,6 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
 
@@ -11,6 +12,7 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("dev")
 public class RabbitMQConection {
 	
 	private static final String EXCHANGE_NAME = "amq.direct";
