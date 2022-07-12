@@ -56,6 +56,7 @@ public class UserModel implements UserDetails{
 	
 	@NotBlank
 	@Email
+	@Column(unique=true)
 	private String email;
 	
 	@NotBlank
