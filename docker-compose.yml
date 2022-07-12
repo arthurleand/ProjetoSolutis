@@ -1,0 +1,37 @@
+services:
+  rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq
+        restart: always
+        ports: 
+            - 5672:5672
+            - 15672:15672
+        volumes:
+            - ./dados:/var/lib/rabbitmq
+        environment:
+            - RABBITMQ_DEFAULT_USER=admin
+            - RABBITMQ_DEFAULT_PASS=admin
+    
+   
+  solutis-db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'solutis_db'
+      MYSQL_ROOT_PASSWORD: 'arthur'
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    container_name: db-currency-api
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 10s
+      retries: 10
+    
+    
+      
+      
