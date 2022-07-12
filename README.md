@@ -24,6 +24,11 @@ Senha MySQL:
 User: rooot
 Password:arthur
 ```
+Usuário em memória no banco:
+```
+User: admin@email.com
+Password: admin123
+```
 Usuário e senha do RabbitMQ
 ```
 User: admin
