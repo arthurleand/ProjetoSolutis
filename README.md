@@ -7,6 +7,9 @@ Java 11 ou mais atual
 ```
 Docker
 ```
+```
+Lombok instalado na ide
+```
 ## 🔧 Instalação
 Clone o repositório:
 ```
