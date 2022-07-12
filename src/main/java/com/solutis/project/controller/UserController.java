@@ -88,7 +88,18 @@ public class UserController {
 				.build());
 	}
 	
-	
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@DeleteMapping("/{id}")
+	@Transactional
+	@CacheEvict(value = "cacheUser", allEntries = true)
+	public void delete (@PathVariable Long id) {
+		Optional<UserModel> user = userRepository.findById(id);
+		if(user.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"User Not Found!");
+		}
+		log.info("Deleting user by id: {}",id);
+		userRepository.deleteById(id);
+	}
 	
 	@PostMapping("/login")
 	@Transactional
