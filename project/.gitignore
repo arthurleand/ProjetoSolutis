@@ -34,3 +34,6 @@ build/
 
 ### MYSQL_DATA ### 
 mysql_data/
+
+### RabbitMQ ### 
+dados/

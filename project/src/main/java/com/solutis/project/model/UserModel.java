@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -46,6 +47,7 @@ public class UserModel implements UserDetails{
 	private String name;
 	
 	@NotBlank
+	@Column(unique=true)
 	private String cpf;
 	
 	@NotNull
